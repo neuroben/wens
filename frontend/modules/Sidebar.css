@@ -1,0 +1,134 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 320px;
+  background: #000;
+  box-shadow: 2px 0 16px rgba(0,0,0,0.08);
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+}
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar-toggle {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  background: #646cff;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  cursor: pointer;
+  z-index: 1100;
+  transition: background 0.2s, border-radius 0.3s, width 0.3s, height 0.3s;
+}
+.sidebar-toggle.open {
+  background: #fff;
+  border-radius: 12px;
+  width: 120px;
+  height: 40px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  justify-content: flex-start;
+  padding-left: 16px;
+}
+.sidebar-toggle.open svg {
+  margin-right: 8px;
+}
+.sidebar-toggle .close-icon {
+  display: none;
+}
+.sidebar-toggle.open .close-icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.sidebar-toggle:hover {
+  background: #535bf2;
+}
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+}
+.sidebar-svg {
+  margin-left: 1rem;
+}
+.sidebar-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.sidebar-form input {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid white;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+.sidebar-form input:focus {
+  border: 1.5px solid #646cff;
+}
+.add-feed-btn {
+  background: #646cff;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.add-feed-btn:hover {
+  background: #535bf2;
+}
+.sidebar-list {
+  flex: 1;
+  overflow-y: auto;
+}
+.sidebar-list h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: #646cff;
+}
+.sidebar-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sidebar-list li {
+  background: #000;
+  border-radius: 1px;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.feed-name {
+  font-weight: 600;
+  color: #213547;
+}
+.feed-url {
+  font-size: 0.95rem;
+  color: #646cff;
+  word-break: break-all;
+}

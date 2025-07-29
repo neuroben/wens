@@ -1,0 +1,57 @@
+.card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ffffff;
+    border-color: rgba(255, 255, 255, 0.55);
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-content h2 {
+    -webkit-text-stroke: 0.5px white;
+    -webkit-text-stroke-width: 10;
+    -webkit-text-fill-color: blue;
+    color: #000000;
+    font-size: 2rem;
+}
+.card-content .meta{
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+}
+.date {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.author {
+    color: #888;
+    font-size: 0.9rem;
+    margin: 0;
+    font-style: italic;
+}
+
+.description {
+    color: #555;
+    margin: 0;
+}
+
+.link-to-article {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    align-self: flex-start;
+}
+
+.link-to-article:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
