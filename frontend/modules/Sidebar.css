@@ -21,10 +21,10 @@
   position: fixed;
   top: 1.5rem;
   left: 1.5rem;
-  background: #646cff;
+  background: #000dff;
   border: none;
   border-radius: 50%;
-  width: 60px;
+  width: 48px;
   height: 48px;
   display: flex;
   align-items: center;
@@ -35,14 +35,18 @@
   transition: background 0.2s, border-radius 0.3s, width 0.3s, height 0.3s;
 }
 .sidebar-toggle.open {
-  background: #fff;
-  border-radius: 12px;
-  width: 120px;
+  background: #5b0000;
+  border-radius: 0px;
+  border: 1px solid white;
+  border-width: 1px;
+  width: 320px;
   height: 40px;
+  text-align: center;
   box-shadow: 0 2px 8px rgba(0,0,0,0.12);
   justify-content: flex-start;
   padding-left: 16px;
 }
+
 .sidebar-toggle.open svg {
   margin-right: 8px;
 }
@@ -54,16 +58,18 @@
   width: 24px;
   height: 24px;
 }
-
 .sidebar-toggle:hover {
-  background: #535bf2;
+  background: #0084ff;
+}
+.sidebar-toggle.open:hover {
+  background: #b73131;
 }
 .sidebar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-top: 2rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 .sidebar-svg {
   margin-left: 1rem;
@@ -76,28 +82,32 @@
 }
 .sidebar-form input {
   padding: 0.5rem 1rem;
-  border-radius: 8px;
+  border-radius: 1px;
   border: 1px solid white;
   font-size: 1rem;
   outline: none;
   transition: border 0.2s;
 }
 .sidebar-form input:focus {
-  border: 1.5px solid #646cff;
+  border: 1.5px solid #000dff;
 }
 .add-feed-btn {
-  background: #646cff;
-  color: #000;
+  background: #000dff;
+  color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 1px;
   padding: 0.5rem 1.5rem;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;
 }
-.add-feed-btn:hover {
-  background: #535bf2;
+.add-feed-btn:hover:not(:disabled) {
+  background: #0084ff;
+}
+.add-feed-btn:disabled {
+  background: #666;
+  cursor: not-allowed;
 }
 .sidebar-list {
   flex: 1;
@@ -106,7 +116,7 @@
 .sidebar-list h3 {
   margin-bottom: 0.5rem;
   font-size: 1.1rem;
-  color: #646cff;
+  color: white;
 }
 .sidebar-list ul {
   list-style: none;
@@ -115,20 +125,132 @@
 }
 .sidebar-list li {
   background: #000;
-  border-radius: 1px;
+  border: 1px solid white;
   margin-bottom: 0.5rem;
   padding: 0.5rem 1rem;
   display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
   box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
+
+.feed-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+  min-width: 0;
+}
+
 .feed-name {
   font-weight: 600;
-  color: #213547;
+  color: #8499ac;
 }
+
 .feed-url {
-  font-size: 0.95rem;
-  color: #646cff;
+  font-size: 0.85rem;
+  color: #b5b8ff;
   word-break: break-all;
+  opacity: 0.8;
 }
+
+.remove-feed-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.remove-feed-btn:hover:not(:disabled) {
+  background: #c82333;
+}
+
+.remove-feed-btn:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+.no-feeds {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* Feed History Styling */
+.feed-history li {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.feed-history li.feed-active {
+  background: rgba(0, 13, 255, 0.1);
+  border: 1px solid rgba(0, 13, 255, 0.3);
+}
+
+.feed-history li.feed-active .feed-name {
+  color: #4a90e2;
+}
+
+.feed-actions {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.restore-feed-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.restore-feed-btn:hover:not(:disabled) {
+  background: #218838;
+}
+
+.restore-feed-btn:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+.remove-history-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-history-btn:hover:not(:disabled) {
+  background: #5a6268;
+}
+
+.remove-history-btn:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+

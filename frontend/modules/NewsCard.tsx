@@ -1,21 +1,37 @@
-import './NewsCard.css'
+import "./NewsCard.css";
+interface NewsCardProps {
+  title?: string;
+  date?: string;
+  author?: string;
+  description?: string;
+  link?: string;
+  source?: string;
+}
 
-function NewsCard() {
-    return (
-        <div className="card">
-            <div className="card-content">
-                <h2>Kipróbáltuk, hogy milyen hétről hétre száz liter vizet cipelni a szomjazó fákhoze</h2>
-                <div className='meta'>
-                    <p className="date">2025.07.29.</p>
-                    <p className="author">Kovács Bence Áron</p>
-                </div>                
-                <p className="description">
-                    Ez itt a cikk rövid bevezetője vagy kivonata, amely felkelti az olvasó figyelmét, és kattintásra ösztönöz.
-                </p>
-                <a className="link-to-article" href="www.google.com">Olvasd tovább</a>
-            </div>
+function NewsCard(props: NewsCardProps) {
+  return (
+    <div className="card">
+      <div className="card-content">
+        <h2>{props.title}</h2>
+        <div className="meta">
+          <p className="date">{props.date}</p>
+          <p className="author">{props.author}</p>
         </div>
-    )
+        <p className="description">{props.description}</p>
+        <div className="row-container">
+          <a
+            className="link-to-article"
+            href={props.link}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Olvasd tovább
+          </a>
+          <p className="source">{props.source}</p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default NewsCard;

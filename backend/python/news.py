@@ -1,19 +1,11 @@
 import feedparser
 import time
-
-class PortalFeed:
-    def __init__(self, name, feed_url):
-        self.name = name
-        self.feed_url = feed_url
-
-    def __str__(self):
-        return f"{self.name}"
-
-    def returnNews(name,feed_url):
-        return feedparser.parse(feed_url)
+import re
 
 class News:
-    def __init__(self, title, link, pubDate, pubTime, pubDateTime, author, category, description, imgLink, source):
+    def __init__(self, title=None, link=None, pubDate=None, pubTime=None, 
+                 pubDateTime=None, author=None, category=None, description=None, 
+                 imgLink=None, source=None):
         self.title = title
         self.link = link
         self.pubDate = pubDate
@@ -25,85 +17,123 @@ class News:
         self.imgLink = imgLink
         self.source = source
 
-    def __str__(self):
-        return self.title
+    def to_dict(self):
+        return {
+            "title": self.title,
+            "link": self.link,
+            "pubDate": self.pubDate,
+            "pubTime": self.pubTime,
+            "pubDateTime": self.pubDateTime,
+            "author": self.author,
+            "category": self.category,
+            "description": self.description,
+            "imgLink": self.imgLink,
+            "source": self.source
+        }
 
+class NewsAggregator:
+    def __init__(self):
+        self.news_list = []
+        self.feeds = {}
 
-if __name__ == "__main__":
-    1+1
+    def parse_feed(self, feed_url):
+        return feedparser.parse(feed_url)
 
+    def clean_description(self, description):
+        if not description:
+            return ""
+    
+        clean_text = re.sub(r'<[^>]+>', '', description)
+        
+        clean_text = ' '.join(clean_text.split())
+        
+        if len(clean_text) > 256:
+            clean_text = clean_text[:253] + "..."
+        
+        return clean_text
 
-def feedInput(feedName, feedUrl):
-    feed = PortalFeed.returnNews(feedName, feedUrl)
-    return 0
+    def extract_image_url(self, entry):
+        enclosures = entry.get('enclosures', [])
+        if enclosures and isinstance(enclosures[0], dict) and 'url' in enclosures[0]:
+            return enclosures[0]['url']
+        
+        if 'media_thumbnail' in entry and entry['media_thumbnail']:
+            return entry['media_thumbnail'][0].get('url', 'missing')
+        
+        if 'media_content' in entry and entry['media_content']:
+            media_contents = entry['media_content']
+            largest_width = 0
+            best_url = ""
+            
+            for media in media_contents:
+                if 'url' in media:
+                    width = int(media.get('width', 0))
+                    if width > largest_width:
+                        largest_width = width
+                        best_url = media['url']
+            
+            return best_url if best_url else media_contents[0].get('url', 'missing')
+        
+        return "missing"
 
-telexFeed = PortalFeed.returnNews("Telex", "https://telex.hu/rss/archivum?filters=%7B%22parentId%22%3A%5B%22null%22%5D%7D&perPage=5")
-#bbcFeed = PortalFeed.returnNews("BBC", "https://feeds.bbci.co.uk/news/rss.xml?edition=uk")
-#guradianUKFeed = PortalFeed.returnNews("GuardianUK", "https://www.theguardian.com/uk/rss")
-news_list = []
-
-def appendNews(feed, source_name):
-    for entry in feed:
+    def process_entry(self, entry, source_name):
         title = entry.get('title')
         link = entry.get('link')
+        
         t = entry.get('published_parsed')
         if t:
             pubDate = time.strftime("%Y-%m-%d", t)
             pubTime = time.strftime("%H:%M:%S", t)
             pubDateTime = time.strftime("%Y-%m-%d %H:%M:%S", t)
         else:
-            pubDateTime = "Nincs dátum & idő"
+            pubDate = pubTime = pubDateTime = "Nincs dátum & idő"
+        
         author = entry.get('author')
         category = entry.get('category')
-        description = entry.get('description')
-        imgLink = ""
-        enclosures = entry.get('enclosures', [])
-        if enclosures and 'url' in enclosures[0]:
-            imgLink = enclosures[0]['url']
-        elif 'media_thumbnail' in entry:
-            imgLink = entry['media_thumbnail'][0].get('url', 'missing')
-        elif 'media_content' in entry and entry['media_content']:
-            media_contents = entry['media_content']
-            largest_width = 0
-            for media in media_contents:
-                if 'url' in media:
-                    width = int(media.get('width', 0))
-                    if width > largest_width:
-                        largest_width = width
-                        imgLink = media['url']
-            if not imgLink:
-                imgLink = media_contents[0].get('url', 'missing')
-        else:
-            imgLink = "missing"
-
-        news = News(title, link, pubDate, pubTime, pubDateTime, author, category, description, imgLink, source_name)
-        news_list.append(news)
-
-appendNews(telexFeed.entries, "Telex")
-#appendNews(bbcFeed.entries, "BBC")
-#appendNews(guradianUKFeed.entries, "Guradian")
-
-def fetchnews():
-    return news_list
-
-# for n in news_list:
-#     print("=" * 80)
-#     print(f"Forrás: {n.source}")
-#     print(f"Cím: {n.title}")
-#     print(f"Link: {n.link}")
-#     print(f"Dátum: {n.pubDate}")
-#     print(f"Idő: {n.pubTime}")
-#     print(f"Teljes dátum és idő: {n.pubDateTime}")
-#     print(f"Szerző: {n.author if n.author else 'Nincs megadva'}")
-#     print(f"Kategória: {n.category if n.category else 'Nincs megadva'}")
-#     print(f"Leírás: {n.description if n.description else 'Nincs leírás'}")
-#     print(f"Kép URL: {n.imgLink}")
-#     print("=" * 80)
-#     print()
-
-
-print(len(news_list))
-    
-
-
+        description = self.clean_description(entry.get('description', ''))
+        imgLink = self.extract_image_url(entry)
         
+        return News(
+            title=title,
+            link=link,
+            pubDate=pubDate,
+            pubTime=pubTime,
+            pubDateTime=pubDateTime,
+            author=author,
+            category=category,
+            description=description,
+            imgLink=imgLink,
+            source=source_name
+        )
+
+    def fetch_all_news(self):
+        self.news_list.clear()
+        
+        for source_name, feed_url in self.feeds.items():
+            feed = self.parse_feed(feed_url)
+            if not feed or not hasattr(feed, 'entries'):
+                continue
+            
+            for entry in feed.entries:
+                news = self.process_entry(entry, source_name)
+                self.news_list.append(news)
+        
+        return self.news_list
+
+    def get_news_as_dict(self):
+        return [news.to_dict() for news in self.news_list]
+
+    def add_custom_feed(self, name, url):
+        self.feeds[name] = url
+        return True
+
+    def remove_feed(self, name):
+        if name in self.feeds:
+            del self.feeds[name]
+            return True
+        return False
+
+    def get_feeds(self):
+        return self.feeds.copy()
+
+news_aggregator = NewsAggregator()

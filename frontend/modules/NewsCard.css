@@ -3,23 +3,37 @@
     flex-direction: column;
     border: 1px solid #ffffff;
     border-color: rgba(255, 255, 255, 0.55);
-    border-radius: 8px;
-    padding: 10px;
-    margin: 10px;
+    border-radius: 1px;
+    padding: 3px;
+    margin: 0;
     background-color: rgba(0, 0, 0, 0.5);
+    font-family: 'Courier New', Courier, monospace;
+    width: 100%;
+    height: fit-content;
 }
+
+/* Remove mobile specific rules since columns handle this */
 
 .card-content {
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
 .card-content h2 {
-    -webkit-text-stroke: 0.5px white;
-    -webkit-text-stroke-width: 10;
-    -webkit-text-fill-color: blue;
+    -webkit-text-stroke: 0.3px rgba(67, 95, 255, 0.581);
+    -webkit-text-fill-color: rgb(255, 255, 255);
     color: #000000;
-    font-size: 2rem;
+    font-size: 20px;
+    text-align: justify;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: none;
+    margin: 0 0 10px 0;
+    line-height: 1.2;
+}
+.card-content h2:hover {
+    -webkit-text-stroke: 0.3px rgb(255, 195, 195);
 }
 .card-content .meta{
     display: flex;
@@ -27,7 +41,7 @@
     column-gap: 20px;
 }
 .date {
-    color: #666;
+    color: white;
     font-size: 0.9rem;
     margin: 0;
 }
@@ -40,8 +54,15 @@
 }
 
 .description {
-    color: #555;
+    color: white;
+    text-align: justify;
     margin: 0;
+}
+.source{
+    color: white;
+    font-size: 1.1rem;
+    margin: 0;
+    text-decoration: underline;
 }
 
 .link-to-article {
@@ -54,4 +75,11 @@
 .link-to-article:hover {
     text-decoration: underline;
     color: #0056b3;
+}
+
+.row-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
 }
