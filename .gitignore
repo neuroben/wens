@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Server startup scripts (environment specific)
+start_server.bat
+start_server.ps1
+**/start_server.bat
+**/start_server.ps1
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
