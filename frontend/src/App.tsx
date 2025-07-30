@@ -213,7 +213,7 @@ function App() {
               fontSize: "14px",
               zIndex: 1000,
               border: "1px solid #333",
-              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.3)"
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.3)",
             }}
           >
             Hírek frissítése...
