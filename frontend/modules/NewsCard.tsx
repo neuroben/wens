@@ -3,17 +3,39 @@ import type { NewsCardProps } from "../types/NewsTypes";
 import { useNewsCardClick } from "../hooks/useNewsCardClick";
 
 function NewsCard(props: NewsCardProps) {
-  const { handleCardClick, handleMouseDown, preventPropagation } =
-    useNewsCardClick(props.link);
+  const {
+    handleCardClick,
+    handleMouseDown,
+    handleMouseEnter,
+    handleMouseLeave,
+    preventPropagation,
+    isHovered,
+    hasImage,
+  } = useNewsCardClick(props.link, props.imgLink);
 
   return (
     <div
-      className="card"
+      className={`card ${hasImage ? "has-image" : ""}`}
       onClick={handleCardClick}
       onMouseDown={handleMouseDown}
       onAuxClick={handleCardClick}
-      style={{ cursor: "pointer" }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={{ cursor: "pointer", position: "relative" }}
     >
+      {isHovered && props.imgLink && (
+        <div className="card-image-slide-up">
+          <img
+            src={props.imgLink}
+            alt={props.title || "Cikk kép"}
+            className="card-slide-image"
+            onError={(e) => {
+              // Ha nem sikerül betölteni a képet, elrejtjük
+              (e.target as HTMLImageElement).style.display = "none";
+            }}
+          />
+        </div>
+      )}
       <div className="card-content">
         <h2>{props.title}</h2>
         <div className="meta">

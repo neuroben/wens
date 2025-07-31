@@ -18,6 +18,7 @@ export interface NewsCardProps {
   description?: string;
   link?: string;
   source?: string;
+  imgLink?: string;
 }
 
 export interface SidebarProps {

@@ -115,6 +115,7 @@ function App() {
                     description={newsItem.description}
                     link={newsItem.link}
                     source={newsItem.source}
+                    imgLink={newsItem.imgLink}
                   />
                 ))}
               </div>

@@ -1,5 +1,5 @@
 /**
- * Nyitja meg a linket új lapon biztonságos módon
+ * Új lapon nyitja meg a linket biztonságos módon
  */
 export const openLinkInNewTab = (url: string): void => {
   if (url) {
