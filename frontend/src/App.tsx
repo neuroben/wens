@@ -1,32 +1,23 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import NewsCard from "../modules/NewsCard";
 import Sidebar from "../modules/Sidebar";
 import SearchBox from "../modules/SearchBox";
 import "./App.css";
-
-interface NewsItem {
-  title?: string;
-  link?: string;
-  pubDate?: string;
-  pubTime?: string;
-  pubDateTime?: string;
-  author?: string;
-  category?: string;
-  description?: string;
-  imgLink?: string;
-  source?: string;
-}
+import type { NewsItem } from "../types/NewsTypes";
+import { useNewsSearch } from "../hooks/useNewsSearch";
+import { useResponsiveLayout } from "../hooks/useResponsiveLayout";
 
 function App() {
   const [news, setNews] = useState<NewsItem[]>([]);
-  const [filteredNews, setFilteredNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+
+  const { filteredNews, uniqueSources, handleSearch, initializeFiltered } =
+    useNewsSearch(news);
+  const { newsColumns } = useResponsiveLayout(filteredNews);
 
   const fetchNews = async () => {
     try {
       setLoading(true);
-      setError(null);
 
       const response = await fetch("http://127.0.0.1:8000/news");
 
@@ -36,10 +27,9 @@ function App() {
 
       const newsData: NewsItem[] = await response.json();
       setNews(newsData);
-      setFilteredNews(newsData); // Kezdetben minden hír látható
+      initializeFiltered(); // Kezdetben minden hír látható
     } catch (err) {
       console.error("Error fetching news:", err);
-      setError(err instanceof Error ? err.message : "Failed to fetch news");
     } finally {
       setLoading(false);
     }
@@ -49,138 +39,13 @@ function App() {
     fetchNews();
   };
 
-  // Egyedi források kinyerése
-  const uniqueSources = useMemo(() => {
-    const sources = news
-      .map((item) => item.source)
-      .filter((source): source is string => Boolean(source))
-      .filter((source, index, array) => array.indexOf(source) === index)
-      .sort();
-    return ["Összes", ...sources];
-  }, [news]);
-
-  // FTS5-szerű keresés implementáció
-  const searchWithRelevanceScore = (items: NewsItem[], searchTerm: string) => {
-    if (!searchTerm.trim()) return items;
-
-    const query = searchTerm.toLowerCase().trim();
-    const tokens = query.split(/\s+/).filter((token) => token.length > 0);
-
-    const scoredItems = items.map((item) => {
-      let score = 0;
-      const title = (item.title || "").toLowerCase();
-      const description = (item.description || "").toLowerCase();
-      const author = (item.author || "").toLowerCase();
-      const source = (item.source || "").toLowerCase();
-
-      // Teljes kifejezés pontszámok (magasabb súly)
-      if (title.includes(query)) score += 10;
-      if (description.includes(query)) score += 5;
-      if (author.includes(query)) score += 3;
-      if (source.includes(query)) score += 2;
-
-      // Token alapú pontszámok
-      tokens.forEach((token) => {
-        // Címben található token (legmagasabb súly)
-        if (title.includes(token)) {
-          score += title.startsWith(token) ? 8 : 4; // Kezdő pozíció bonus
-        }
-
-        // Leírásban található token
-        if (description.includes(token)) {
-          score += 2;
-        }
-
-        // Szerzőben található token
-        if (author.includes(token)) {
-          score += 3;
-        }
-
-        // Forrásban található token
-        if (source.includes(token)) {
-          score += 1;
-        }
-
-        // Fuzzy matching (részleges egyezés)
-        if (token.length > 2) {
-          if (title.includes(token.substring(0, token.length - 1))) score += 1;
-          if (description.includes(token.substring(0, token.length - 1)))
-            score += 0.5;
-        }
-      });
-
-      return { item, score };
-    });
-
-    // Csak releváns elemek visszaadása (score > 0) relevancia szerint rendezve
-    return scoredItems
-      .filter(({ score }) => score > 0)
-      .sort((a, b) => b.score - a.score)
-      .map(({ item }) => item);
-  };
-
-  // Szűrés kezelése FTS5-szerű logikával
-  const handleSearch = (searchTerm: string, selectedSource: string) => {
-    let filtered = news;
-
-    // Forrás szerinti szűrés
-    if (selectedSource !== "Összes") {
-      filtered = filtered.filter((item) => item.source === selectedSource);
-    }
-
-    // FTS5-szerű keresés
-    filtered = searchWithRelevanceScore(filtered, searchTerm);
-
-    setFilteredNews(filtered);
-  };
-
-  const organizeIntoColumns = (newsItems: NewsItem[], columnCount: number) => {
-    const columns: NewsItem[][] = Array.from({ length: columnCount }, () => []);
-
-    newsItems.forEach((item) => {
-      const shortestColumnIndex = columns.reduce(
-        (minIndex, column, currentIndex) => {
-          return columns[minIndex].length <= column.length
-            ? minIndex
-            : currentIndex;
-        },
-        0
-      );
-
-      columns[shortestColumnIndex].push(item);
-    });
-
-    return columns;
-  };
-
-  const getColumnCount = () => {
-    if (typeof window === "undefined") return 3;
-    const width = window.innerWidth;
-    if (width < 640) return 1;
-    if (width < 1000) return 2;
-    if (width < 1400) return 3;
-    return 4;
-  };
-
-  const [columnCount, setColumnCount] = useState(getColumnCount());
-
-  useEffect(() => {
-    const handleResize = () => {
-      setColumnCount(getColumnCount());
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const newsColumns = useMemo(
-    () => organizeIntoColumns(filteredNews, columnCount),
-    [filteredNews, columnCount]
-  );
-
   useEffect(() => {
     fetchNews();
   }, []);
+
+  useEffect(() => {
+    initializeFiltered();
+  }, [news, initializeFiltered]);
 
   // Csak akkor loading screen, ha még nincsenek hírek
   if (loading && news.length === 0) {
