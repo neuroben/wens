@@ -30,7 +30,7 @@ const SearchBox = ({
           if (onSearch) {
             onSearch(term, source);
           }
-        }, 150); // 150ms késleltetés
+        }, 100);
       };
     })(),
     [onSearch]
