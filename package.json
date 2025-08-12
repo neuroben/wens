@@ -4,7 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "backend": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./start_server.bat",
+    "backend": "start_server.bat",
+    "backend:win": "start_server.bat",
+    "backend:ps": "powershell -ExecutionPolicy Bypass -File start_server.ps1",
+    "backend:unix": "bash start_server.sh",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
